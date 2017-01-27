@@ -6,7 +6,7 @@ import (
 )
 
 // BaseURL ChatWork API endpooint URL
-const BaseURL = `https://api.chatwork.com/v1`
+const BaseURL = `https://api.chatwork.com/v2`
 
 // Me model
 type Me struct {
