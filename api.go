@@ -6,7 +6,7 @@ import (
 )
 
 // BaseURL ChatWork API endpooint URL
-const BaseURL = `https://api.chatwork.com/v1`
+const BaseURL = `https://api.chatwork.com/v2`
 
 // Me model
 type Me struct {
@@ -211,7 +211,7 @@ type Account struct {
 
 // Message model
 type Message struct {
-	MessageID  int     `json:"message_id"`
+	MessageID  string  `json:"message_id"`
 	Account    Account `json:"account"`
 	Body       string  `json:"body"`
 	SendTime   int64   `json:"send_time"`
@@ -261,7 +261,7 @@ type Task struct {
 	TaskID            int     `json:"task_id"`
 	Account           Account `json:"account"`
 	AssignedByAccount Account `json:"assigned_by_account"`
-	MessageID         int     `json:"message_id"`
+	MessageID         string  `json:"message_id"`
 	Body              string  `json:"body"`
 	LimitTime         int64   `json:"limit_time"`
 	Status            string  `json:"status"`
@@ -309,7 +309,7 @@ func (c *Client) RoomTask(roomID, taskID string) (task Task, err error) {
 type File struct {
 	FileID      int     `json:"file_id"`
 	Account     Account `json:"account"`
-	MessageID   int     `json:"message_id"`
+	MessageID   string  `json:"message_id"`
 	Filename    string  `json:"filename"`
 	Filesize    int     `json:"filesize"`
 	UploadTime  int64   `json:"upload_time"`
