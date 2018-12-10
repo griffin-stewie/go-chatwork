@@ -53,22 +53,22 @@ func NewClient(apiKey string) *Client {
 
 // Get GET method
 func (c *Client) Get(endpoint string, params map[string]string) ([]byte, error) {
-	return c.execute("GET", endpoint, params)
+	return c.execute(http.MethodGet, endpoint, params)
 }
 
 // Post POST method
 func (c *Client) Post(endpoint string, params map[string]string) ([]byte, error) {
-	return c.execute("POST", endpoint, params)
+	return c.execute(http.MethodPost, endpoint, params)
 }
 
 // Put PUT method
 func (c *Client) Put(endpoint string, params map[string]string) ([]byte, error) {
-	return c.execute("PUT", endpoint, params)
+	return c.execute(http.MethodPut, endpoint, params)
 }
 
 // Delete DELETE method
 func (c *Client) Delete(endpoint string, params map[string]string) ([]byte, error) {
-	return c.execute("DELETE", endpoint, params)
+	return c.execute(http.MethodDelete, endpoint, params)
 }
 
 func (c *Client) postFile(endpoint string, message, fileName string, file io.Reader) ([]byte, error) {
