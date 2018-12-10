@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"html"
+	"io"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -68,6 +71,15 @@ func (c *Client) Delete(endpoint string, params map[string]string) ([]byte, erro
 	return c.execute("DELETE", endpoint, params)
 }
 
+func (c *Client) postFile(endpoint string, message, fileName string, file io.Reader) ([]byte, error) {
+	req, err := c.fileUploadRequest(endpoint, message, fileName, file)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.sendRequest(req)
+}
+
 func (c *Client) buildURL(baseURL, endpoint string, params map[string]string) string {
 	query := make([]string, len(params))
 	for k := range params {
@@ -101,11 +113,35 @@ func (c *Client) parseBody(resp *http.Response) ([]byte, error) {
 	return body, nil
 }
 
-func (c *Client) execute(method, endpoint string, params map[string]string) ([]byte, error) {
-	if c.HTTPClient == nil {
-		c.HTTPClient = &http.Client{}
+func (c *Client) fileUploadRequest(endpoint, message, fileName string, file io.Reader) (*http.Request, error) {
+	var buf bytes.Buffer
+
+	w := multipart.NewWriter(&buf)
+
+	w.WriteField("message", html.EscapeString(message))
+
+	fw, err := w.CreateFormFile("file", fileName)
+	if err != nil {
+		return nil, err
+	}
+	if _, err = io.Copy(fw, file); err != nil {
+		return nil, err
+	}
+	w.Close()
+
+	req, err := http.NewRequest(http.MethodPost, c.BaseURL+endpoint, &buf)
+	if err != nil {
+		return nil, err
 	}
 
+	req.Header.Set("Content-Type", w.FormDataContentType())
+
+	req.Header.Add("X-ChatWorkToken", c.APIKey)
+
+	return req, nil
+}
+
+func (c *Client) request(method, endpoint string, params map[string]string) *http.Request {
 	var (
 		req        *http.Request
 		requestErr error
@@ -123,6 +159,14 @@ func (c *Client) execute(method, endpoint string, params map[string]string) ([]b
 
 	req.Header.Add("X-ChatWorkToken", c.APIKey)
 
+	return req
+}
+
+func (c *Client) sendRequest(req *http.Request) ([]byte, error) {
+	if c.HTTPClient == nil {
+		c.HTTPClient = &http.Client{}
+	}
+
 	resp, err := c.HTTPClient.Do(req)
 	c.latestRateLimit = c.rateLimit(resp)
 
@@ -131,6 +175,11 @@ func (c *Client) execute(method, endpoint string, params map[string]string) ([]b
 	}
 
 	return c.parseBody(resp)
+}
+
+func (c *Client) execute(method, endpoint string, params map[string]string) ([]byte, error) {
+	req := c.request(method, endpoint, params)
+	return c.sendRequest(req)
 }
 
 func (c *Client) rateLimit(resp *http.Response) *RateLimit {
