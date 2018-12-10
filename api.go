@@ -2,6 +2,7 @@ package gochatwork
 
 import (
 	"encoding/json"
+	"io"
 	"time"
 )
 
@@ -343,6 +344,11 @@ func (c *Client) RoomFile(roomID, fileID string, params map[string]string) (file
 	}
 	err = json.Unmarshal(ret, &file)
 	return
+}
+
+// PostRoomFile POST "/rooms/{room_id}/files"
+func (c *Client) PostRoomFile(roomID, message, fileName string, file io.Reader) ([]byte, error) {
+	return c.postFile("/rooms/"+roomID+"/files", message, fileName, file)
 }
 
 // RateLimit model
