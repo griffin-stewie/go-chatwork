@@ -411,3 +411,31 @@ func (c *Client) GetInvitationLink(roomID string) (invitationLink InvitationLink
 	return
 }
 
+// PostInvitationLink POST "/rooms/{room_id}/link"
+// params keys
+//  - code
+//  - description
+//  - need_acceptance
+func (c *Client) PostInvitationLink(roomID, code, description string, needAcceptance bool) (invitationLink InvitationLink, err error) {
+	params := make(map[string]string)
+	boolStr := "0"
+	if needAcceptance {
+		boolStr = "1"
+	}
+	params["need_acceptance"] = boolStr
+
+	if len(code) != 0 {
+		params["code"] = code
+	}
+
+	if len(description) != 0 {
+		params["description"] = description
+	}
+
+	ret, err := c.Post("/rooms/"+roomID+"/link", params)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(ret, &invitationLink)
+	return
+}
