@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"html"
 	"io"
 	"io/ioutil"
@@ -106,7 +107,14 @@ func (c *Client) parseBody(resp *http.Response) ([]byte, error) {
 
 	if resp.StatusCode != 200 {
 		var er ChatWorkError
-		json.Unmarshal(body, &er)
+		if err := json.Unmarshal(body, &er); err != nil {
+			// create a slice for the errors
+			var errStrs []string
+			errStrs = append(errStrs, err.Error())
+			errStrs = append(errStrs, bytes.NewBuffer(body).String())
+
+			return []byte(``), fmt.Errorf(strings.Join(errStrs, "\n"))
+		}
 		return []byte(``), er.error()
 	}
 
