@@ -258,6 +258,11 @@ func (c *Client) RoomMessage(roomID, messageID string) (message Message, err err
 	return
 }
 
+// RoomMessageMarkAsRead PUT "/rooms/{room_id}/messages/read"
+func (c *Client) RoomMessageMarkAsRead(roomID, messageID string) ([]byte, error) {
+	return c.Put("/rooms/"+roomID+"/messages/read/", map[string]string{"message_id": messageID})
+}
+
 // RoomMessageMarkAsUnread PUT "/rooms/{room_id}/messages/unread"
 func (c *Client) RoomMessageMarkAsUnread(roomID, messageID string) ([]byte, error) {
 	return c.Put("/rooms/"+roomID+"/messages/unread/", map[string]string{"message_id": messageID})
