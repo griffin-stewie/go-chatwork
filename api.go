@@ -258,6 +258,11 @@ func (c *Client) RoomMessage(roomID, messageID string) (message Message, err err
 	return
 }
 
+// RoomMessageMarkAsUnread PUT "/rooms/{room_id}/messages/unread"
+func (c *Client) RoomMessageMarkAsUnread(roomID, messageID string) ([]byte, error) {
+	return c.Put("/rooms/"+roomID+"/messages/unread/", map[string]string{"message_id": messageID})
+}
+
 // Task model
 type Task struct {
 	TaskID            int     `json:"task_id"`
