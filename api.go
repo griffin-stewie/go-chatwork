@@ -29,6 +29,7 @@ type Me struct {
 	Facebook         string `json:"facebook"`
 	Twitter          string `json:"twitter"`
 	AvatarImageURL   string `json:"avatar_image_url"`
+	LoginMail        string `json:"login_mail"`
 }
 
 // Me GET "/me"
