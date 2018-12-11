@@ -263,6 +263,11 @@ func (c *Client) DeleteRoomMessage(roomID, messageID string) ([]byte, error) {
 	return c.Delete("/rooms/"+roomID+"/messages/"+messageID, map[string]string{})
 }
 
+// UpdateRoomMessage PUT "/rooms/{room_id}/messages/{message_id}"
+func (c *Client) UpdateRoomMessage(roomID, messageID, body string) ([]byte, error) {
+	return c.Put("/rooms/"+roomID+"/messages/"+messageID, map[string]string{"body": body})
+}
+
 // RoomMessageMarkAsRead PUT "/rooms/{room_id}/messages/read"
 func (c *Client) RoomMessageMarkAsRead(roomID, messageID string) ([]byte, error) {
 	return c.Put("/rooms/"+roomID+"/messages/read/", map[string]string{"message_id": messageID})
