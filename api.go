@@ -392,3 +392,22 @@ func (c *Client) RateLimit() *RateLimit {
 	}
 	return c.latestRateLimit
 }
+
+// InvitationLink model
+type InvitationLink struct {
+	IsPublic       bool   `json:"public"`
+	URL            string `json:"url"`
+	NeedAcceptance bool   `json:"need_acceptance"`
+	Description    string `json:"description"`
+}
+
+// GetInvitationLink GET "/rooms/{room_id}/link"
+func (c *Client) GetInvitationLink(roomID string) (invitationLink InvitationLink, err error) {
+	ret, err := c.Get("/rooms/"+roomID+"/link", map[string]string{})
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(ret, &invitationLink)
+	return
+}
+
