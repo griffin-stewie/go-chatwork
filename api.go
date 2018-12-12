@@ -469,3 +469,17 @@ func (c *Client) UpdateInvitationLink(roomID, code, description string, needAcce
 	return
 }
 
+// DeleteInvitationLink DELETE "/rooms/{room_id}/link"
+// params keys
+//  - code
+//  - description
+//  - need_acceptance
+func (c *Client) DeleteInvitationLink(roomID string) (invitationLink InvitationLink, err error) {
+	params := make(map[string]string)
+	ret, err := c.Delete("/rooms/"+roomID+"/link", params)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(ret, &invitationLink)
+	return
+}
