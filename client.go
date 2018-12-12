@@ -105,7 +105,11 @@ func (c *Client) parseBody(resp *http.Response) ([]byte, error) {
 		return []byte(``), err
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode == http.StatusNoContent {
+		return []byte(``), nil
+	}
+
+	if resp.StatusCode != http.StatusOK {
 		var er ChatWorkError
 		if err := json.Unmarshal(body, &er); err != nil {
 			// create a slice for the errors

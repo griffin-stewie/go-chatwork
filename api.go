@@ -2,6 +2,7 @@ package gochatwork
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"time"
 )
@@ -482,4 +483,53 @@ func (c *Client) DeleteInvitationLink(roomID string) (invitationLink InvitationL
 	}
 	err = json.Unmarshal(ret, &invitationLink)
 	return
+}
+
+// IncomingRequest model
+type IncomingRequest struct {
+	RequestID        int    `json:"request_id"`
+	AccountID        int    `json:"account_id"`
+	Message          string `json:"message"`
+	Name             string `json:"name"`
+	ChatworkID       int    `json:"chatwork_id"`
+	OrganizationID   string `json:"organization_id"`
+	OrganizationName string `json:"organization_name"`
+	Department       string `json:"department"`
+	AvatarImageUrl   string `json:"avatar_image_url"`
+}
+
+// GetIncomingRequests GET "/incoming_requests"
+func (c *Client) GetIncomingRequests() (incomingRequests []IncomingRequest, err error) {
+	ret, err := c.Get("/incoming_requests", map[string]string{})
+	if err != nil {
+		return
+	}
+
+	if len(ret) == 0 {
+		return
+	}
+
+	err = json.Unmarshal(ret, &incomingRequests)
+	return
+}
+
+// ApproveIncomingRequests PUT "/incoming_requests/{request_id}"
+func (c *Client) ApproveIncomingRequests(requestID int) (incomingRequest IncomingRequest, err error) {
+	ret, err := c.Put(fmt.Sprintf("/incoming_requests/%d", requestID), map[string]string{})
+	if err != nil {
+		return
+	}
+
+	if len(ret) == 0 {
+		return
+	}
+
+	err = json.Unmarshal(ret, &incomingRequest)
+	return
+}
+
+// DeleteIncomingRequests DELETE "/incoming_requests/{request_id}"
+func (c *Client) DeleteIncomingRequests(requestID int) error {
+	_, err := c.Delete(fmt.Sprintf("/incoming_requests/%d", requestID), map[string]string{})
+	return err
 }
