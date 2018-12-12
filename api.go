@@ -439,3 +439,33 @@ func (c *Client) PostInvitationLink(roomID, code, description string, needAccept
 	err = json.Unmarshal(ret, &invitationLink)
 	return
 }
+
+// UpdateInvitationLink PUT "/rooms/{room_id}/link"
+// params keys
+//  - code
+//  - description
+//  - need_acceptance
+func (c *Client) UpdateInvitationLink(roomID, code, description string, needAcceptance bool) (invitationLink InvitationLink, err error) {
+	params := make(map[string]string)
+	boolStr := "0"
+	if needAcceptance {
+		boolStr = "1"
+	}
+	params["need_acceptance"] = boolStr
+
+	if len(code) != 0 {
+		params["code"] = code
+	}
+
+	if len(description) != 0 {
+		params["description"] = description
+	}
+
+	ret, err := c.Put("/rooms/"+roomID+"/link", params)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(ret, &invitationLink)
+	return
+}
+
