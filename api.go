@@ -491,7 +491,7 @@ type IncomingRequest struct {
 	AccountID        int    `json:"account_id"`
 	Message          string `json:"message"`
 	Name             string `json:"name"`
-	ChatworkID       int    `json:"chatwork_id"`
+	ChatworkID       string    `json:"chatwork_id"`
 	OrganizationID   string `json:"organization_id"`
 	OrganizationName string `json:"organization_name"`
 	Department       string `json:"department"`
